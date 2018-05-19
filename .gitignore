@@ -1,2 +1,11 @@
+.cache-main
+.cache-tests
+.classpath
+.settings/
+.worksheet/
 *.class
+.idea
+.project
+target/
+
 *.log
