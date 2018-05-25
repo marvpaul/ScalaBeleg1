@@ -22,18 +22,26 @@ class Processing {
 		line.replaceAll("[^A-Za-z ]", " ").replaceAll("  *", " ").toLowerCase.split(" ").filter(x => x != "").toList
 	}
 
+	/**
+	  * Extracts all Words from a List containing tupels consisting
+	  * of a line number and a string
+	  * The Words should be in the same order as they occur in the source document
+	  *
+	  * Hint: Use the flatMap function
+	  * @param l a list with line number and the line as a string
+	  * @return each word as a list elem like ["Hello", "nice", "text"]
+	  */
 	def getAllWords(l: List[(Int, String)]): List[String] = {
 
-		/*
-		 * Extracts all Words from a List containing tupels consisting
-		 * of a line number and a string
-		 * The Words should be in the same order as they occur in the source document
-		 *
-		 * Hint: Use the flatMap function
-		 */
+
 		l.flatMap(x => getWords(x._2))
 	}
 
+	/**
+	  * Count the occurrences of each word in a given text
+	  * @param l a list with words
+	  * @return a list in following format: [["hello", 2], ["no", 3], ["yes", 1]]
+	  */
 	def countTheWords(l: List[String]): List[(String, Int)] = {
 
 		/*
