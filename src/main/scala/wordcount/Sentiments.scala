@@ -28,28 +28,46 @@ class Sentiments (sentiFile:String){
    *********************************************************************************************
   */
 
+  /**
+    * get a list with lists of words inside. Each sublist has a maximum capacity of wordCount elements
+    * @param filename a file where we wanna to read from
+    * @param wordCount the capacity of each sublist
+    * @return e.g. [[1, ["Hello", "my", "dear"]], [2, ["this", "is", "all"]]]
+    */
   def getDocumentGroupedByCounts(filename:String, wordCount:Int):List[(Int,List[String])]= {
     //Load file
     val url=getClass.getResource("/"+filename).getPath
     val src = scala.io.Source.fromFile(url)
     val iter = src.getLines()
     val proc= new Processing()
+
+    //Iterate over each line and seperate in words
     val words = iter.map(x=>proc.getWords(x)).foldLeft(List[String]())((list, word) => List.concat(list, word))
+
+    //Go throught each word
     words.foldLeft(List[(Int, List[String])]())((myList, word) => {
+      //Just add the first entry, easy going so far
       if(myList.isEmpty) List((1, List(word)))
+        //In case the last list element can take one more word, just add it to the list
       else if(myList.last._2.size < wordCount){
         List.concat(myList.dropRight(1), List((myList.last._1, List.concat(myList.last._2, List(word))))) //add new word to last elem
       }
+      //Section of list is full, add another section
       else {
-        //Section of list is full, add another section
         val newList = List.concat(myList, List((myList.last._1 + 1, List(word))))
         newList
       }
     })
   }
-  
-  
+
+
+  /**
+    * Simple sentiment alaysis of a given file
+    * @param l a given list with words
+    * @return
+    */
   def analyzeSentiments(l:List[(Int,List[String])]):List[(Int, Double, Double)]= {
+    //Get the sentiments
     val sentiAnalyse= new Sentiments("AFINN-111.txt").sentiments
     //Get a list with each paragraph, the sentiment words and the number of total words
     val sentiWordsAndValues = l.foldLeft(List[(Int, List[(String, Int)], Int)]())((list, paragraph) => {
@@ -58,6 +76,7 @@ class Sentiments (sentiFile:String){
         case None => list
       }), paragraph._2.length))
     })
+    //Reformat to fit into the required data format
     val result = sentiWordsAndValues.foldLeft(List[(Int, Double, Double)]())((list, paragraph) => {
       val sentiment_values = paragraph._2.foldLeft(List[Int]())((values, word) => word._2 :: values).sum.toDouble / paragraph._2.length.toDouble
       val rel_words_used = paragraph._2.length.toDouble / paragraph._3.toDouble
