@@ -34,7 +34,7 @@ class Sentiments (sentiFile:String){
     * @param wordCount the capacity of each sublist
     * @return e.g. [[1, ["Hello", "my", "dear"]], [2, ["this", "is", "all"]]]
     */
-  def getDocumentGroupedByCounts(filename:String, wordCount:Int):List[(Int,List[String])]= {
+  def getDocumentGroupedByCounts(filename:String, wordCount:Int):List[(Int, List[String])]= {
     //Load file
     val url=getClass.getResource("/"+filename).getPath
     val src = scala.io.Source.fromFile(url)
@@ -42,7 +42,7 @@ class Sentiments (sentiFile:String){
     val proc= new Processing()
 
     //Iterate over each line and seperate in words
-    val words = iter.map(x=>proc.getWords(x)).foldLeft(List[String]())((list, word) => List.concat(list, word))
+    val words = iter.map(x=>proc.getWords(x)).foldLeft(List[String]())((list, line) => list ++ line)
 
     //Go throught each word
     words.foldLeft(List[(Int, List[String])]())((myList, word) => {
@@ -50,11 +50,11 @@ class Sentiments (sentiFile:String){
       if(myList.isEmpty) List((1, List(word)))
         //In case the last list element can take one more word, just add it to the list
       else if(myList.last._2.size < wordCount){
-        List.concat(myList.dropRight(1), List((myList.last._1, List.concat(myList.last._2, List(word))))) //add new word to last elem
+        myList.dropRight(1) ++ List((myList.last._1, myList.last._2 ++ List(word))) //add new word to last elem
       }
       //Section of list is full, add another section
       else {
-        val newList = List.concat(myList, List((myList.last._1 + 1, List(word))))
+        val newList = myList ++ List((myList.last._1 + 1, List(word)))
         newList
       }
     })
@@ -72,6 +72,7 @@ class Sentiments (sentiFile:String){
     //Get a list with each paragraph, the sentiment words and the number of total words
     val sentiWordsAndValues = l.foldLeft(List[(Int, List[(String, Int)], Int)]())((list, paragraph) => {
       list ++ List((paragraph._1, paragraph._2.foldLeft(List[(String, Int)]())((list, word) => sentiAnalyse.get(word) match{
+        //Add the word in case its a sentiment word
         case Some(elem) => List.concat(list, List((word, sentiAnalyse.get(word).last)))
         case None => list
       }), paragraph._2.length))
