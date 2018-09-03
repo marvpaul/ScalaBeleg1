@@ -19,7 +19,12 @@ class Processing {
 		 * 2. Shifts all words to lower case
 		 * 3. Extracts all words and put them into a list of strings
 		 */
-		line.replaceAll("[^A-Za-z ]", " ").replaceAll("  *", " ").toLowerCase.split(" ").filter(x => x != "").toList
+		if(line == ""){
+			List()
+		} else{
+			line.replaceAll("[^A-Za-z ]", " ").replaceAll("  *", " ").toLowerCase.split(" ").filter(x => x != "").toList
+
+		}
 	}
 
 	/**
@@ -99,12 +104,12 @@ class Processing {
 	 */
 		var words_in_line_with_number = list_with_linenr_and_linetext
 			//Map to list with all words in a row
-			.map(linetext_and_linenr => getWords(linetext_and_linenr._2)
+			.flatMap(linetext_and_linenr => getWords(linetext_and_linenr._2)
 				//Map to tuple of (linenr, word)
 				.map(list_with_all_words_in_one_line => (linetext_and_linenr._1, list_with_all_words_in_one_line)))
 
 		//Make a simple list
-		words_in_line_with_number.foldLeft(List[(Int, String)]())((list, line) => line ++ list)
+		words_in_line_with_number.foldLeft(List[(Int, String)]())((list, line) => List(line) ++ list)
 	}
 
 

@@ -36,9 +36,9 @@ class Sentiments (sentiFile:String){
     */
   def getDocumentGroupedByCounts(filename:String, wordCount:Int):List[(Int, List[String])]= {
     //Load file
-    val url=getClass.getResource("/"+filename).getPath
+    val url=getClass.getResource("/" + filename).getPath
     val src = scala.io.Source.fromFile(url)
-    val iter = src.getLines()
+    val iter = src.getLines().toList
     val proc= new Processing()
 
     //Iterate over each line and seperate in words

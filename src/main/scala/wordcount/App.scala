@@ -21,16 +21,10 @@ object App {
    *  Testen Sie die App mit verschiedenen Absatzgroessen
    */
   def main(args: Array[String]) = {
-    val s1="This 88 is! a,Test! The result !!!should be: 8 Words"
-    val proc= new Processing()
-    val r= proc.getWords(s1)
-
-    print(r)
-    /*
     val sentiAnalyse= new Sentiments("AFINN-112.txt")
     val book= sentiAnalyse.getDocumentGroupedByCounts("GoneWithTheWind.txt", 20000)
     val data= sentiAnalyse.analyzeSentiments(book)
-    sentiAnalyse.createGraph(data)  */
+    sentiAnalyse.createGraph(data)
   }
 
 }
